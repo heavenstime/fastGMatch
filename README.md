@@ -12,8 +12,8 @@
   `make`
 
 ## Usage of the matching program
-  `cd src`
-  `./fastMatch command imageName templateName`
+ 1. `cd src`  
+ 1. `./fastMatch command imageName templateName`
   * command = 0 : Search a part that is similar to template data (templateName) from input image (imageName)
   * command = 1 : Make and output template data (templateName) from input image (imageName)
   * Folders for input images and output images are specified by macro variables (WORKDIR and WORKOUTDIR, respectively) in fastMatch.h
@@ -34,7 +34,7 @@
 
 ## Usage of the checking result program
  1.  `cd matlab`
- 1.  Start `matlab`.I
+ 1.  `matlab &`
  1. In the matlab command shell type  
   `mainMatchCheck`
  1.  Then, it show the template image with center, scale, and main direction and several best matched pairs of the (transformed) template image and input image with centers, scales, and main directions. The images are also stored in a folder.
