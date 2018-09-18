@@ -3,7 +3,7 @@ CFLAGS	= -O3
 LDFLAGS	= 
 INCLUDES = 
 LIBS	= -lm
-TARGET	= fastMatch
+TARGET	= fastGMatch
 OBJS	= fastGMatch.o calFeature.o utilities.o
 
 # Commands

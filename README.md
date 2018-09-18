@@ -1,4 +1,4 @@
-# fastMatch
+# fastGMatch
   * The programs are licenced by GPL v3. 
   * Fast image matching method using Gaussian smoothing by sliding discrete Fourier 
   * Sample images (Graffiti and Boat) are contained for check the program.
@@ -13,20 +13,20 @@
 
 ## Usage of the matching program
  1. `cd src`  
- 1. `./fastMatch command imageName templateName`
+ 1. `./fastGMatch command imageName templateName`
   * command = 0 : Search a part that is similar to template data (templateName) from input image (imageName)
   * command = 1 : Make and output template data (templateName) from input image (imageName)
-  * Folders for input images and output images are specified by macro variables (WORKDIR and WORKOUTDIR, respectively) in fastMatch.h
+  * Folders for input images and output images are specified by macro variables (WORKDIR and WORKOUTDIR, respectively) in fastGMatch.h
 
 ## Example
   * Make template  
-  `./fastMatch 1 img1 img1.template`
+  `./fastGMatch 1 img1 img1.template`
   * Matching  
-  `./fastMatch 0 img1 img1.template`
+  `./fastGMatch 0 img1 img1.template`
 
 ## Files for for the matching program
-  * `fastMatch.c` : Main program and function for matching.
-  * `fastMatch.h` : Parameters to use this program and header file for fastMatch.c.
+  * `fastGMatch.c` : Main program and function for matching.
+  * `fastGMatch.h` : Parameters to use this program and header file for fastGMatch.c.
   * `calFeature.c` : Programs to calculate features.
   * `calFeature.h` : Header file for calFeature.c.
   * `utilities.c` : Utility functions (File input/output). 
