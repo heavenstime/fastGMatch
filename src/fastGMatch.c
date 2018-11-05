@@ -359,7 +359,7 @@ if (mkTemplate) {
 
 	/* Initialize image regions P = 2 */
 	workIIR2->nOrd = 2;
-	workIIR2->blurCoef = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR2->nOrd + 1));
+	workIIR2->blurCoef = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR2->nOrd + 2));
 	workIIR2->diffCoef = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR2->nOrd + 1));
 	workIIR2->blurCoef[workIIR2->nOrd + 1] = 0.0;
 	sign = 1.0;
@@ -374,7 +374,7 @@ if (mkTemplate) {
 	workIIR2->cosL    = (FPTYPE *) malloc(sizeof(FPTYPE) * workIIR2->nOrd);
 	workIIR2->sinL    = (FPTYPE *) malloc(sizeof(FPTYPE) * workIIR2->nOrd);
 	workIIR2->lineExt = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR2->maxNInt));
-	workIIR2->intCos  = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR2->maxNInt) * (workIIR2->nOrd + 2));
+	workIIR2->intCos  = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR2->maxNInt) * (workIIR2->nOrd + 1));
 	workIIR2->intSin  = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR2->maxNInt) * (workIIR2->nOrd + 1));
 	workIIR2->intCos[0] = 0.0;
 	workIIR2->intSin[0] = 0.0;
@@ -395,7 +395,7 @@ if (mkTemplate) {
 	workIIR4->cosL    = (FPTYPE *) malloc(sizeof(FPTYPE) * workIIR4->nOrd);
 	workIIR4->sinL    = (FPTYPE *) malloc(sizeof(FPTYPE) * workIIR4->nOrd);
 	workIIR4->lineExt = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR4->maxNInt));
-	workIIR4->intCos  = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR4->maxNInt) * (workIIR4->nOrd + 2));
+	workIIR4->intCos  = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR4->maxNInt) * (workIIR4->nOrd + 1));
 	workIIR4->intSin  = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR4->maxNInt) * (workIIR4->nOrd + 1));
 	workIIR4->intCos[0] = 0.0;
 	workIIR2->intSin[0] = 0.0;
