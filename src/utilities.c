@@ -377,23 +377,23 @@ int histSave(FPTYPE *dirHist, int nx, int ny) {
 	int nxy = nx * ny;
 	char fileName[MAX_FILENAME];
 
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "histc0.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "histc0.pgm");
 	saveImageFileFp(fileName, dirHist, nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "histc1.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "histc1.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy]), nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "histc2.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "histc2.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy * 3]), nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "histc3.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "histc3.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy * 5]), nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "histc4.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "histc4.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy * 7]), nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "hists1.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "hists1.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy * 2]), nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "hists2.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "hists2.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy * 4]), nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "hists3.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "hists3.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy * 6]), nx, ny);
-	strcpy(fileName, WORKOUTDIR); strcat(fileName, "hists4.pgm");
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "hists4.pgm");
 	saveImageFileFp(fileName, &(dirHist[nxy * 8]), nx, ny);
 
 	return 0;

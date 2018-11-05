@@ -11,7 +11,7 @@
 /* Default parameters: switch whether making template or matching, file names. They can be changed by command line parameters */
 #define MKTEMPLATE     0               /* 0: matching, 1: make template */
 #define TEMPLATEDNAME "img1.template"  /* Template data file name. It used for both input (matching) and output (making template) */
-#define IMAGENAME     "img1"           /* Input image file name */
+#define IMAGENAME     "img6"           /* Input image file name */
 
 /* Floading point type (float or double) */
 #define FPTYPE float
@@ -24,13 +24,16 @@
 #define TEMPLATEENCOEF  0.25       /* The coefficient for anisotropic elongation */
 #define TEMPLSCALERATIO 1.41421356 /* the next scale = the present scale * SCALERATIO */
 
+/* Work base directory */
+#define WORKBASE         "../images/"
+
 /* Selection of image database */
 #define BOAT  /* BOAT, GRAF, or LENNA*/
 
 /* Image information */
 #ifdef GRAF
-#define WORKDIR         "../images/GRAF/"
-#define WORKOUTDIR      "../images/GRAF/OutMatch/"
+#define IMGIN           "GRAF/"
+#define IMGOUT          "GRAF/OutMatch/"
 #define TEMPLATEX       430
 #define TEMPLATEY       310
 #define TEMPLSCALEINIT  150.0     /* The initial scale */
@@ -42,8 +45,8 @@
 #endif
 
 #ifdef BOAT
-#define WORKDIR         "../images/Boat/"
-#define WORKOUTDIR      "../images/Boat/OutMatch/"
+#define IMGIN          "Boat/"
+#define IMGOUT         "Boat/OutMatch/"
 #define TEMPLATEX       425
 #define TEMPLATEY       340
 #define TEMPLSCALEINIT  200.0     /* The initial scale */
@@ -54,9 +57,36 @@
 #define SCALEMAX        301.0    /* The maximum scale to be handled */
 #endif
 
+#ifdef BARK
+#define IMGIN           "Bark/blurred/"
+#define IMGOUT          "Bark/OutMatch/"
+#define TEMPLATEX       360
+#define TEMPLATEY       255
+#define TEMPLSCALEINIT  100.0     /* The initial scale for Boat */
+#define TEMPLSCALEMAX   150.0     /* The maximum scale to be handled for Boat */
+#define NX              765      /* Horizontal # of pixel in image */
+#define NY              512      /* Vertical # of pixel in image */
+#define SCALEINIT       25.0     /* The initial scale for BOAT */
+#define SCALEMAX        101.0    /* The maximum scale to be handled BOAT */
+#endif
+
+#ifdef UBC
+#define IMGIN           "UBC/"
+#define IMGOUT          "UBC/OutMatch/"
+#define TEMPLATEX       410
+#define TEMPLATEY       240
+#define TEMPLSCALEINIT  100.0     /* The initial scale for Boat */
+#define TEMPLSCALEMAX   150.0     /* The maximum scale to be handled for Boat */
+#define NX              800      /* Horizontal # of pixel in image */
+#define NY              640      /* Vertical # of pixel in image */
+#define SCALEINIT       50.0     /* The initial scale for BOAT */
+#define SCALEMAX        201.0    /* The maximum scale to be handled BOAT */
+#endif
+
+
 #ifdef LENNA  /* This file is used only for debug (Not matching) */
-#define WORKDIR         "../images/Lenna/"
-#define WORKOUTDIR      "../images/Lenna/OutMatch/"
+#define IMGIN           "Lenna/"
+#define IMGOUT          "Lenna/OutMatch/"
 #define TEMPLATEX       256
 #define TEMPLATEY       256
 #define TEMPLSCALEINIT   80.0     /* The initial scale */

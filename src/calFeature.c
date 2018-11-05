@@ -259,20 +259,22 @@ int gaussSmooth1(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dImg, int nx, in
 					valB += workIIR->blurCoef[loopOrd] * (workIIR->intCos[posS + K2] - workIIR->intCos[posS]);
 					posS += workIIR->nInt;
 				}
-				bImg[ix + pos] = valB + workIIR->blurCoef[nOrd] * workIIR->lineExt[ix];
+				bImg[ix + pos] = valB + workIIR->blurCoef[nOrd + 1] * workIIR->lineExt[ix];
 			} else	if (type == 1) { /* Only differential */
 				 valD = 0.0;
-				for (loopOrd = 0 ; loopOrd <= nOrd ; ++loopOrd) {
-					valD += workIIR->diffCoef[loopOrd] * (workIIR->intSin[posS + K2] - workIIR->intSin[posS]);
+				for (loopOrd = 1 ; loopOrd <= nOrd ; ++loopOrd) {
 					posS += workIIR->nInt;
+					valD += workIIR->diffCoef[loopOrd] * (workIIR->intSin[posS + K2] - workIIR->intSin[posS]);
 				}
 				dImg[ix + pos] = valD;
 			} else {
-				valB = valD = 0.0;
-				for (loopOrd = 0 ; loopOrd <= nOrd ; ++loopOrd) {
+				loopOrd = 0;
+				valB = workIIR->blurCoef[loopOrd] * (workIIR->intCos[posS + K2] - workIIR->intCos[posS]);
+				valD = 0.0;
+				for (loopOrd = 1 ; loopOrd <= nOrd ; ++loopOrd) {
+					posS += workIIR->nInt;
 					valB += workIIR->blurCoef[loopOrd] * (workIIR->intCos[posS + K2] - workIIR->intCos[posS]);
 					valD += workIIR->diffCoef[loopOrd] * (workIIR->intSin[posS + K2] - workIIR->intSin[posS]);
-					posS += workIIR->nInt;
 				}
 				bImg[ix + pos] = valB + workIIR->blurCoef[nOrd + 1] * workIIR->lineExt[ix];
 				dImg[ix + pos] = valD;

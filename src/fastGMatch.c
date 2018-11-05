@@ -54,7 +54,9 @@ int main(int argc, char *argv[]) {
 	GptTbl  *gptTbl        = (GptTbl *) malloc(sizeof(GptTbl));
 
 	/* Set file names */
-	strcpy(fileName, WORKDIR);strcpy(dFileName, WORKOUTDIR); strcpy(tmplDFileName, WORKOUTDIR);
+	strcpy(fileName, WORKBASE); strcat(fileName, IMGIN);
+	strcpy(dFileName, WORKBASE); strcat(dFileName, IMGOUT);
+	strcpy(tmplDFileName, WORKBASE); strcat(tmplDFileName, IMGOUT);
 	if (argc == 4) {
 		mkTemplate = atoi(argv[1]);
 		strcat(fileName, argv[2]);
@@ -93,7 +95,7 @@ int main(int argc, char *argv[]) {
 		printf("nTrans = %d  %d \n", nTrans, transType);
 		if (mkTemplate) {
 			gptTransformImage(& (gptTbl->gptTbl[transType * 9]), inImgOrg, inImg, nx, ny, TEMPLATEX, TEMPLATEY);
-			sprintf(fileName, "%stranImg%02d.pgm", WORKOUTDIR, transType); saveImageFileFp(fileName, inImg, nx, ny);
+			sprintf(fileName, "%s%stranImg%02d.pgm", WORKBASE, IMGOUT, transType); saveImageFileFp(fileName, inImg, nx, ny);
 			scale = TEMPLSCALEINIT;
 		} else {
 			scale = SCALEINIT;
@@ -107,8 +109,8 @@ int main(int argc, char *argv[]) {
 			if (printTime == 1) printf("End of diff image %lf (sec)\n", (double)((now = clock())- start)/CLOCKS_PER_SEC);
 
 			/* Output differential image */
-			// strcpy(fileName, WORKOUTDIR); strcat(fileName, "diffX.pgm"); saveImageFileFp(fileName, diffXImg, nx, ny);
-			// strcpy(fileName, WORKOUTDIR); strcat(fileName, "diffY.pgm"); saveImageFileFp(fileName, diffYImg, nx, ny);
+			strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "diffX.pgm"); saveImageFileFp(fileName, diffXImg, nx, ny);
+			strcpy(fileName, WORKBASE); strcat(fileName, IMGOUT); strcat(fileName, "diffY.pgm"); saveImageFileFp(fileName, diffYImg, nx, ny);
 
 			/* Fourier series expression of directions */
 			calDirHistPoint(diffXImg, diffYImg, dirHist, nx, ny);
@@ -364,6 +366,7 @@ if (mkTemplate) {
 	for (pos = 0; pos <= workIIR2->nOrd ; ++pos) {
 		workIIR2->blurCoef[pos]                 = sign * coefG2[pos];
 		workIIR2->diffCoef[pos]                 = sign * coefDG2[pos];
+		printf("diff Coef %d = %lf\n", pos, workIIR2->diffCoef[pos]);
 		workIIR2->blurCoef[workIIR2->nOrd + 1] += workIIR2->blurCoef[pos];
 		sign *= -1;
 	}
@@ -378,7 +381,7 @@ if (mkTemplate) {
 
 	/* Initialize image regions P = 4 */
 	workIIR4->nOrd = 4;
-	workIIR4->blurCoef = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR4->nOrd + 1));
+	workIIR4->blurCoef = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR4->nOrd + 2));
 	workIIR4->diffCoef = (FPTYPE *) malloc(sizeof(FPTYPE) * (workIIR4->nOrd + 1));
 	workIIR4->blurCoef[workIIR4->nOrd + 1] = 0.0;
 	sign = 1.0;
