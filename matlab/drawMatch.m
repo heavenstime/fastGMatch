@@ -19,6 +19,7 @@ for tk = -thick:thick
     outImg( yp + cy, -xp + cx) = 255;
   end
 
+
   for dp = 0:rI
     outImg( floor(dp * sinTheta - cosTheta * tk) + cy, floor(dp * cosTheta + sinTheta * tk) + cx) = 255;
   end

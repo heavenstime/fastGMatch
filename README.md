@@ -2,21 +2,22 @@
   * The programs are licenced by GPL v3. 
   * Fast image matching method using Gaussian smoothing by sliding discrete Fourier 
   * Sample images (Graffiti and Boat) are contained for check the program.
-  
+
 ## Programs
-  * C programs for the matching program
+  * C++ programs for the matching program
+    (There are older C programs in src directory.)
   * M-files to check the former's results.
 
 ## Compile of matching program
-  `cd src`
-  `make`
+ 1. `cd srcCPP`  
+ 1.  `make`
 
 ## Usage of the matching program
- 1. `cd src`  
+ 1. `cd srcCPP`  
  1. `./fastGMatch command imageName templateName`
   * command = 0 : Search a part that is similar to template data (templateName) from input image (imageName)
   * command = 1 : Make and output template data (templateName) from input image (imageName)
-  * Folders for input images and output images are specified by macro variables (WORKDIR and WORKOUTDIR, respectively) in fastGMatch.h
+  * Folders/Directory for input images and output images are specified by macro variables (WORKDIR and WORKOUTDIR, respectively) in `parameter.h`
 
 ## Example
   * Make template  
@@ -25,14 +26,15 @@
   `./fastGMatch 0 img1 img1.template`
 
 ## Files for for the matching program
+  * `parameter.h` : Parameters for the program
   * `fastGMatch.c` : Main program and function for matching.
   * `fastGMatch.h` : Parameters to use this program and header file for fastGMatch.c.
-  * `calFeature.c` : Programs to calculate features.
-  * `calFeature.h` : Header file for calFeature.c.
+  * `extFeature.c` : Programs to calculate features.
+  * `extFeature.h` : Header file for calFeature.c.
   * `utilities.c` : Utility functions (File input/output). 
   * `utilities.h` : Header file for utilities.c.
 
-## Usage of the checking result program
+## Usage of the program to check results 
  1.  `cd matlab`
  1.  `matlab &`
  1. In the matlab command shell type  
