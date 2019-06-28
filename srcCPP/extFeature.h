@@ -40,8 +40,7 @@ public:
 	int extType = 0; /* 0 : zero extension, 1 : extension */
 	FPTYPE *cosL;
 	FPTYPE *sinL;
-	FPTYPE *lineAdd;
-	FPTYPE *lineSub;
+	FPTYPE *lineExt;
 	FPTYPE *blurCoef;
 	FPTYPE *diffCoef;
 	FPTYPE *inteCos;
@@ -63,8 +62,7 @@ public:
 
 	int  gaussDiff(FPTYPE *inImg, FPTYPE *diffXImg,  FPTYPE *diffYImg, WorkIIR *workIIR) ;
 	int  gaussSmooth(FPTYPE *inImg, FPTYPE *blurImg, WorkIIR *workIIR);
-	int  gaussSmooth1Tr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dImg, WorkIIR *workIIR);
-
+	int  gaussSmoothSubTr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dImg, WorkIIR *workIIR);
 };
 
 class Feature {

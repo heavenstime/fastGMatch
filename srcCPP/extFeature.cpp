@@ -344,11 +344,11 @@ int ImageProc::gaussDiff(FPTYPE *inImg, FPTYPE *diffXImg,  FPTYPE *diffYImg, Wor
 	ImageProc *imageProcTrans = new ImageProc(ny, nx, workImg, workMaxT);
 
 	/* X direction */;
-	gaussSmooth1Tr(2, inImg, workImg->xBlurImg, workImg->xDiffXImg,  workIIR);
+	gaussSmoothSubTr(2, inImg, workImg->xBlurImg, workImg->xDiffXImg,  workIIR);
 
 	/* Y direction */
-	imageProcTrans->gaussSmooth1Tr(1, workImg->xBlurImg, NULL, diffYImg,  workIIR);
-	imageProcTrans->gaussSmooth1Tr(0, workImg->xDiffXImg, diffXImg, NULL,  workIIR);
+	imageProcTrans->gaussSmoothSubTr(1, workImg->xBlurImg, NULL, diffYImg,  workIIR);
+	imageProcTrans->gaussSmoothSubTr(0, workImg->xDiffXImg, diffXImg, NULL,  workIIR);
 
 	return 0;
 }
@@ -358,20 +358,18 @@ int ImageProc::gaussSmooth(FPTYPE *inImg, FPTYPE *blurImg, WorkIIR *workIIR) {
 	ImageProc *imageProcTrans = new ImageProc(ny, nx, workImg, workMaxT);
 
 	/* X direction */;
-	gaussSmooth1Tr(0, inImg, workImg->xBlurImg, NULL, workIIR);
+	gaussSmoothSubTr(0, inImg, workImg->xBlurImg, NULL, workIIR);
 	/* Y direction */
-	imageProcTrans->gaussSmooth1Tr(0, workImg->xBlurImg, blurImg, NULL,  workIIR);
+	imageProcTrans->gaussSmoothSubTr(0, workImg->xBlurImg, blurImg, NULL,  workIIR);
 	return 0;
 }
 
 /* One dimensional transform (by interval integral) with Transposition */
-int ImageProc::gaussSmooth1Tr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dImg, WorkIIR *workIIR) {
+int ImageProc::gaussSmoothSubTr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dImg, WorkIIR *workIIR) {
 	int K = workIIR->K, K2 = 2 * K;
-	int nInte = nx + K;
 	int P = workIIR->P;
   FPTYPE extS, inteCosTmp, inteSinTmp, add, sub, val1, val2;
-  FPTYPE *lineAdd = workIIR->lineAdd;
-  FPTYPE *lineSub = workIIR->lineSub;
+  FPTYPE *lineExt = workIIR->lineExt;
 	FPTYPE *cosL    = workIIR->cosL;
 	FPTYPE *sinL    = workIIR->sinL;
 	FPTYPE *inteCos = workIIR->inteCos;
@@ -384,25 +382,22 @@ int ImageProc::gaussSmooth1Tr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dIm
 
 
 	/* Fixed Extension region */
-	int H = (nx > K)? K2 : (nx + K);
 	//printf("%d %d %d  %d \n", workIIR->lineSub, lineSub,  workIIR->lineAdd, lineAdd);
-	for (int pos = 0  ; pos < K ; ++pos) lineSub[pos] = 0.0;
 	if (workIIR->extType == 0) {
-		for (int pos = nx ; pos < nx + K ; ++pos) lineAdd[pos] = 0.0;
-		for (int pos = K  ; pos < H      ; ++pos) lineSub[pos] = 0.0;
+		for (int pos = 0      ; pos < K       ; ++pos) lineExt[pos] = 0.0;
+		for (int pos = nx + K ; pos < nx + K2 ; ++pos) lineExt[pos] = 0.0;
 	}
 
 	for (int iy = 0 ; iy < ny ; ++iy) {
 		int outPos = iy;
 		FPTYPE *vect = &(inImg[nx * iy]);
-    for (int pos = 0     ; pos < nx    ; ++pos) lineAdd[pos] = vect[pos];
-    for (int pos = K2    ; pos < nInte ; ++pos) lineSub[pos] = vect[pos - K2];
+    for (int pos = 0     ; pos < nx    ; ++pos) lineExt[pos + K] = vect[pos];
     if (workIIR->extType == 1) {
-	    for (int pos = nx    ; pos < nInte ; ++pos) lineAdd[pos] = vect[nx - 1];
-	    for (int pos = K     ; pos < H     ; ++pos) lineSub[pos] = vect[0];
+	    for (int pos = 0      ; pos < K       ; ++pos) lineExt[pos] = vect[0];
+	    for (int pos = nx + K ; pos < nx + K2 ; ++pos) lineExt[pos] = vect[nx - 1];
 	  }
 	   /* Initial value of integral signal */
-	   extS = (workIIR->extType == 0) ? 0.0 : vect[0];
+	   extS       = (workIIR->extType == 0) ? 0.0 : vect[0];
 	   inteCos[0] = K * extS;
 	   for (int p = 1 ; p <= P ; ++p) {
 	     inteCos[p] = cosInitCoef[p] * extS;
@@ -411,17 +406,17 @@ int ImageProc::gaussSmooth1Tr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dIm
 	   switch(type) {
 	   case 0: /* Only blurring */
 	  	 for (int pos = 0 ; pos < K ; ++pos) {
-	  		 inteCos[0] += add = lineAdd[pos];
+	  		 inteCos[0] += add = lineExt[pos + K];
 	  		 for (int p = 1 ; p <= P ; ++p) {
 	  			 inteCosTmp = inteCos[p]; inteSinTmp = inteSin[p];
 	  			 inteCos[p] = cosL[p] * inteCosTmp - sinL[p] * inteSinTmp + add;
 	  			 inteSin[p] = sinL[p] * inteCosTmp + cosL[p] * inteSinTmp;
 	  		 }
 	  	 }
-	  	 for (int pos = K ; pos < nInte ; ++pos) {
-	  		 inteCos[0] += add = lineAdd[pos];
+	  	 for (int pos = K ; pos < nx + K ; ++pos) {
+	  		 inteCos[0] += add = lineExt[pos + K];
 	  		 val1 =  blurCoef[0] * inteCos[0];
-	  		 inteCos[0] -= sub = lineSub[pos];
+	  		 inteCos[0] -= sub = lineExt[pos - K];
 	  		 for (int p = 1 ; p <= P ; ++p) {
 	  			 inteCosTmp = inteCos[p]; inteSinTmp = inteSin[p];
 	  			 inteCos[p] = cosL[p] * inteCosTmp - sinL[p] * inteSinTmp + add;
@@ -436,18 +431,17 @@ int ImageProc::gaussSmooth1Tr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dIm
 	  	 break;
 	   case 1: /* Only differential */
 	  	 for (int pos = 0 ; pos < K ; ++pos) {
-	  		 add = lineAdd[pos];
-		  	 sub = lineSub[pos];
+	  		 add = lineExt[pos + K];
 	  		 for (int p = 1 ; p <= P ; ++p) {
 	  			 inteCosTmp = inteCos[p]; inteSinTmp = inteSin[p];
 	  			 inteCos[p] = cosL[p] * inteCosTmp - sinL[p] * inteSinTmp + add;
 	  			 inteSin[p] = sinL[p] * inteCosTmp + cosL[p] * inteSinTmp;
 	  		 }
 	  	 }
-	  	 for (int pos = K ; pos < nInte ; ++pos) {
-	  		 add = lineAdd[pos];
+	  	 for (int pos = K ; pos < nx + K ; ++pos) {
+	  		 add = lineExt[pos + K];
 		  	 val2 = 0.0;
-		  	 sub = lineSub[pos];
+		  	 sub = lineExt[pos - K];
 	  		 for (int p = 1 ; p <= P ; ++p) {
 	  			 inteCosTmp = inteCos[p]; inteSinTmp = inteSin[p];
 	  			 inteCos[p] = cosL[p] * inteCosTmp - sinL[p] * inteSinTmp + add;
@@ -461,18 +455,18 @@ int ImageProc::gaussSmooth1Tr(int type, FPTYPE *inImg, FPTYPE *bImg, FPTYPE *dIm
 	  	 break;
 	   case 2: /* Blur and differential */
 	  	 for (int pos = 0 ; pos < K ; ++pos) {
-	  		 inteCos[0] += add = lineAdd[pos];
+	  		 inteCos[0] += add = lineExt[pos + K];
 	  		 for (int p = 1 ; p <= P ; ++p) {
 	  			 inteCosTmp = inteCos[p]; inteSinTmp = inteSin[p];
 	  			 inteCos[p] = cosL[p] * inteCosTmp - sinL[p] * inteSinTmp + add;
 	  			 inteSin[p] = sinL[p] * inteCosTmp + cosL[p] * inteSinTmp;
 	  		 }
 	  	 }
-	  	 for (int pos = K ; pos < nInte ; ++pos) {
-	  		 inteCos[0] += add = lineAdd[pos];
+	  	 for (int pos = K ; pos < nx + K ; ++pos) {
+	  		 inteCos[0] += add = lineExt[pos + K];
 	  		 val1 = blurCoef[0] * inteCos[0];
 	  		 val2 = 0.0;
-	  		 inteCos[0] -= sub = lineSub[pos];
+	  		 inteCos[0] -= sub = lineExt[pos - K];
 	  		 for (int p = 1 ; p <= P ; ++p) {
 	  			 inteCosTmp = inteCos[p]; inteSinTmp = inteSin[p];
 	  			 inteCos[p] = cosL[p] * inteCosTmp - sinL[p] * inteSinTmp + add;
@@ -633,8 +627,7 @@ WorkIIR::WorkIIR(int P, int maxNxy, FPTYPE *coefG, FPTYPE *coefDG) {
 
 	cosL    = (FPTYPE *) malloc(sizeof(FPTYPE) * (P + 1));
 	sinL    = (FPTYPE *) malloc(sizeof(FPTYPE) * (P + 1));
-	lineAdd = (FPTYPE *) malloc(sizeof(FPTYPE) * (maxNxy + MAXK));
-	lineSub = (FPTYPE *) malloc(sizeof(FPTYPE) * (maxNxy + MAXK));
+	lineExt = (FPTYPE *) malloc(sizeof(FPTYPE) * (maxNxy + 2 * MAXK));
 	inteCos = (FPTYPE *) malloc(sizeof(FPTYPE) * (P + 1));
 	inteSin = (FPTYPE *) malloc(sizeof(FPTYPE) * (P + 1));
 	cosInitCoef = (FPTYPE *) malloc(sizeof(FPTYPE) * (P + 1));
