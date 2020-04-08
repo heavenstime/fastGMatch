@@ -4,7 +4,6 @@
  *  Created on: 2019/03/13
  *      Author: yamasita
  */
-
 #ifndef PARAMETER_H_
 #define PARAMETER_H_
 
@@ -15,6 +14,8 @@
 #define MKTEMPLATE     0 /* 0: matching, 1: make template */
 #define TEMPLATEDNAME "img1.template"  /* Template data file name. It used for both input (matching) and output (making template) */
 #define IMAGENAME     "img2"           /* Input image file name */
+
+//#define FIRSTORDER    /* Not 4th and 2nd but only first order is used. */
 
 /* Floading point type (float or double) */
 #define FPTYPE float
@@ -29,6 +30,7 @@
 #define OUTPRE "OutMatch/"
 #define TMPLPRE "OutMatch/"
 
+
 /* To make template */
 #define NTEMPLATEROT       4       /* Number of types of rotation for template image 0 or 4 */
 //#define NTEMPLATEROT      128
@@ -41,6 +43,7 @@
 #define IMGPRE           "Graffiti/"
 #define TEMPLATEX       430
 #define TEMPLATEY       310
+#define BLANK           BLACK
 #define TEMPLSCALEINIT  150.0     /* The initial scale */
 #define TEMPLSCALEMAX   250.0     /* The maximum scale to be handled */
 #define NX              800      /* Horizontal # of pixel in image */
@@ -53,6 +56,7 @@
 #define IMGPRE           "Boat/"
 #define TEMPLATEX       425
 #define TEMPLATEY       340
+#define BLANK           BLACK
 #define TEMPLSCALEINIT  200.0     /* The initial scale */
 #define TEMPLSCALEMAX   300.0     /* The maximum scale to be handled */
 #define NX              850      /* Horizontal # of pixel in image */
@@ -65,6 +69,7 @@
 #define IMGPRE          "Bark/"
 #define TEMPLATEX       360
 #define TEMPLATEY       255
+#define BLANK           BLACK
 #define TEMPLSCALEINIT  100.0     /* The initial scale for Boat */
 #define TEMPLSCALEMAX   150.0     /* The maximum scale to be handled for Boat */
 #define NX              765      /* Horizontal # of pixel in image */
@@ -77,6 +82,7 @@
 #define IMGPRE           "UBC/"
 #define TEMPLATEX       410
 #define TEMPLATEY       240
+#define BLANK           BLACK
 #define TEMPLSCALEINIT  100.0     /* The initial scale for Boat */
 #define TEMPLSCALEMAX   150.0     /* The maximum scale to be handled for Boat */
 #define NX              800      /* Horizontal # of pixel in image */
@@ -90,6 +96,7 @@
 #define IMGPRE           "Lenna/"
 #define TEMPLATEX       256
 #define TEMPLATEY       256
+#define BLANK           BLACK
 #define TEMPLSCALEINIT   80.0     /* The initial scale */
 #define TEMPLSCALEMAX    81.0     /* The maximum scale to be handled */
 #define NX              512      /* Horizontal # of pixel in image */
@@ -102,6 +109,7 @@
 #define IMGPRE           "mtmp/"
 #define TEMPLATEX       360
 #define TEMPLATEY       255
+#define BLANK           BLACK
 #define TEMPLSCALEINIT  8.0     /* The initial scale for Boat */
 #define TEMPLSCALEMAX   14.0     /* The maximum scale to be handled for Boat */
 #define NX              765      /* Horizontal # of pixel in image */

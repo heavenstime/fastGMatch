@@ -26,7 +26,11 @@ ExtFeature::	ExtFeature(int nx, int ny) {
 	workMaxT    = new WorkMaxT(nx, ny);
 	imageProc   = new ImageProc(nx, ny, workImg, workMaxT);
 
-	/* Coefficients P = 2, sigma = 1.1  created by totalError201803.m */
+	/* Coefficients P = 1, sigma = 1.35  created by totalError.m */
+	FPTYPE coefG1[]   = {1.5597227790e-01, 1.3326757029e-01};
+	FPTYPE coefDG1[]  = {0.0000000000e+00, -1.3325531981e-01};
+
+	/* Coefficients P = 2, sigma = 1.1  created by totalError.m */
 	FPTYPE coefG2[]   = {1.5846315202e-01, 1.7508079293e-01, 2.7323762984e-02};
 	FPTYPE coefDG2[]  = {0.0000000000e+00, -1.7506270969e-01, -5.4683692457e-02};
 
@@ -36,6 +40,7 @@ ExtFeature::	ExtFeature(int nx, int ny) {
 
 	/* Work region for IIR filter */
 	int maxNxy = (nx > ny) ? nx : ny;
+	workIIR1  = new WorkIIR(1, maxNxy, coefG1, coefDG1);
 	workIIR2  = new WorkIIR(2, maxNxy, coefG2, coefDG2);
 	workIIR4  = new WorkIIR(4, maxNxy, coefG4, coefDG4);
 
@@ -69,14 +74,18 @@ ExtFeature::	ExtFeature(int nx, int ny) {
 
 /* cont == 0: first time for the scale, cont == 1: the previous calculated data can be used. */
 int ExtFeature::extract(int cont, FPTYPE *inImg, int ix, int iy, double scale, Feature **feature1, Feature **feature2) {
+	WorkIIR *workIIRGD, *workIIRGL, *workIIRGS;
+#ifdef FIRSTORDER
+	workIIRGD = workIIR1; workIIRGL = workIIR1; workIIRGS = workIIR1;
+#else
+	workIIRGD = workIIR4; workIIRGL = workIIR2; workIIRGS = workIIR2;
+#endif
 	if (cont == 0) {
-
 		/* Calculate differential images */
 		int 	K4 = (int) (PI * scale * GRADRATIO / (GRIDSIZE * SIGMA4) + ROUNDFRAC);
-		workIIR4->extType = 1;
-		workIIR4->initByK(K4);
+		workIIRGD->extType = 1; workIIRGD->initByK(K4);
 
-		imageProc->gaussDiff(inImg, diffXImg, diffYImg, workIIR4); //Calculate differential  image;
+		imageProc->gaussDiff(inImg, diffXImg, diffYImg, workIIRGD); //Calculate differential  image;
 		//imageProc->gaussSmooth(inImg, diffXImg, workIIR4); //Calculate differential  image;
 		/* Output differential image */
 		std::string fileNameDX(WORKBASE); fileNameDX = fileNameDX + IMGPRE + BLURPRE + OUTPRE + "diffX.pgm";
@@ -90,11 +99,10 @@ int ExtFeature::extract(int cont, FPTYPE *inImg, int ix, int iy, double scale, F
 #ifdef USELARGESCALE
 		/* Blurred directions for large scale */
 		int K2L = (int) (PI * scale / SIGMA2 + ROUNDFRAC);
-		workIIR2->extType = 0;
-		workIIR2->initByK(K2L);
+		workIIRGL->extType = 0; workIIRGL->initByK(K2L);
 		int stPos = 0;
 		for (int order = 0 ; order < 2 * PANGLE + 1 ; ++order) {
-			imageProc->gaussSmooth(&(dirHist[stPos]), &(histFourSL[stPos]), workIIR2);
+			imageProc->gaussSmooth(&(dirHist[stPos]), &(histFourSL[stPos]), workIIRGL);
 			//printf("order %d  %f   %f\n", order, dirHist[stPos + nx / 2 + nx * ny /2], blurLargeDirHist[stPos + nx / 2 + nx * ny /2] );
 			stPos += nxy;
 		}
@@ -106,11 +114,10 @@ int ExtFeature::extract(int cont, FPTYPE *inImg, int ix, int iy, double scale, F
 
 		/* Smooth directions for small scale */
 		int K2S = (int) (PI * scale / (SIGMA2 * GRIDSIZE) + ROUNDFRAC);
-		workIIR2->extType = 0;
-		workIIR2->initByK(K2S);
+		workIIRGS->extType = 0; workIIRGS->initByK(K2S);
 		stPos = 0;
 		for (int order = 0 ; order < 2 * PANGLE + 1; ++order) {
-			imageProc->gaussSmooth(&(dirHist[stPos]), &(histFourSS[stPos]), workIIR2);
+			imageProc->gaussSmooth(&(dirHist[stPos]), &(histFourSS[stPos]), workIIRGS);
 			stPos += nxy;
 		}
 
@@ -121,7 +128,7 @@ int ExtFeature::extract(int cont, FPTYPE *inImg, int ix, int iy, double scale, F
 		}
 	}
 #ifndef USELARGESCALE
-	imageProc->approxLargeScale(histFourS4, & (histFourS1[ix + nx * iy]), ix, iy, workMT);
+	imageProc->approxLargeScale(histFourS4, & (histFourSL[ix + nx * iy]), ix, iy, workMT);
 #endif
 	int maxIThetaL[2];
 	int nMaxTheta = workMaxT->maxDirection(& (histFourSL[ix + nx * iy]), maxIThetaL);
@@ -186,6 +193,12 @@ Feature::Feature(int ix, int iy, int ordHist, int *maxIThetaL, double scale, FPT
 /* Print information of features */
 void Feature::prFeatureInf() {
 	printf("Feature Info. (%3d, %3d) order = %2d, angle = %2d, scale = %7.2f\n", ix, iy, ordHist, iTheta, scale);
+}
+
+void Feature::prFeatureVal() {
+	for (int d = 0 ; d < (2 * PANGLE + 1) * GRIDSIZE * GRIDSIZE ; ++d) {
+		printf("f[%3d] = %f \n", d, vector[d]);
+	}
 }
 
 /* For load feature */
@@ -565,7 +578,7 @@ int WorkMaxT::maxDirection(FPTYPE *histFourS1, int *maxITheta) {
 			posCoef += nData;
 		}
 		vals[iTheta + 1] = val;
-		// printf("iTheta = %d val = %f \n", iTheta, vals[iTheta + 1]);
+		//printf("iTheta = %3d val = %20.1f \n", iTheta, vals[iTheta + 1]);
 	}
 	vals[0]             = vals[NMAXTHETA];
 	vals[NMAXTHETA + 1] = vals[1];

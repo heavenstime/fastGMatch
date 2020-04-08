@@ -76,12 +76,14 @@ public:
 	Feature(int ix, int iy, int ordHist, int *maxIThetaL, double scale, FPTYPE *histFourS4, int *relativePosScL, WorkMaxT *workMT, ImageProc *imageProc);
 	Feature();
 	void prFeatureInf();
+	void prFeatureVal();
 };
 
 class ExtFeature {
 public:
 	int nx, ny, nxy;
-	int nAngleCoef = 2 * PANGLE + 1;;
+	int nAngleCoef = 2 * PANGLE + 1;
+	WorkIIR *workIIR1;
 	WorkIIR *workIIR2;
 	WorkIIR *workIIR4;
 	WorkImg *workImg;

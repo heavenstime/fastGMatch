@@ -363,7 +363,7 @@ void GptPara::gptTransformImage(FPTYPE *inImg, FPTYPE *outImg, int nx, int ny, i
 						(1.0 - yOrgFrac) * ((1.0 - xOrgFrac) * inImg[posOrg] + xOrgFrac * inImg[posOrg + 1])
 						+ yOrgFrac * ((1.0 - xOrgFrac) * inImg[posOrg + nx] + xOrgFrac * inImg[posOrg + nx + 1]));
 			} else {
-				outImg[y * nx + x] = 0.0;
+				outImg[y * nx + x] = BLANK;
 			}
 		}
 	}

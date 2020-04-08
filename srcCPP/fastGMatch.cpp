@@ -126,11 +126,12 @@ int FastGMatch::fastGMatch() {
 			scale = scale * scaleRatio;
 			if (printTime == 1) printf("End of cal feature %lf (sec)\n", (double)((now = clock()) - start)/CLOCKS_PER_SEC);
 		} /* End of scale loop */
-	} /* End of transformation loop */
+	} /* End of transformation loop for make template */
 
 	if (mkTemplate) {
 		extFeature->saveFeatures(tmplDFileName.c_str(), nFeature, nAngleCoef, features);
 		printf("Output %s and end of make template nFeature = %d \n", tmplDFileName.c_str(), nFeature);
+
 	} else {
 		int nFeatureTmpl, nAngleCoefTmpl;
 		extFeature->saveFeatures(dFileName.c_str(), nFeature, nAngleCoef, features);
@@ -158,9 +159,9 @@ int FastGMatch::fastGMatch() {
 			}
 		}
 		utilities->heapSort(record, index,  nFeature * nFeatureTmpl);
-		iFeature     = index[0] / nFeature;
-		iFeatureTmpl = index[0] % nFeature;
-		printf("Corelation = %f,  femplate No. = %2d,  ", record[0], iFeatureTmpl);
+		iFeature     = index[0] / nFeatureTmpl;
+		iFeatureTmpl = index[0] % nFeatureTmpl;
+		printf("Corelation = %f,  template No. = %2d,  %d  ", record[0], iFeatureTmpl, nFeatureTmpl);
 		features[iFeature]->prFeatureInf();
 		printf("Output %s and end of matching \n", dFileName.c_str());
 	}
